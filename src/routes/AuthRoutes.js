@@ -1,8 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import Login from '../pages/Login';
-import Cadastro from '../pages/Cadastro';
+import Login from '../pages/DashBoard';
+import Cadastro from '../pages/Veículos';
 
 const AuthStack = createNativeStackNavigator();
 
