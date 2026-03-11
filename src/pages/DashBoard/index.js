@@ -95,6 +95,7 @@ export default function Cadastro() {
                 </TouchableOpacity>
                 <TouchableOpacity style={stlyes.LinhaCard}>
                     <Ionicons name="create-outline" size={18} color="white"/>
+                    <Text></Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -112,11 +113,13 @@ export default function Cadastro() {
             <Image
                 source={require('../../../assets/Garagem.png')}
             />
+            <Text style={stlyes.TextBtn}>Garagem</Text>
         </TouchableOpacity>
         <TouchableOpacity style={stlyes.BtnPerfil}>
              <Image
                 source={require('../../../assets/Vector.png')}
             />
+            <Text style={stlyes.TextBtnPerfil}>Perfil</Text>
         </TouchableOpacity>
    
  </LinearGradient>
@@ -138,7 +141,7 @@ const stlyes = StyleSheet.create(
             alignItems:'center',
             alignSelf: 'center',
             marginLeft: 27,
-            marginTop: 20
+            marginTop: 18
         },
 
         logo:{
@@ -149,7 +152,7 @@ const stlyes = StyleSheet.create(
             justifyContent: 'space-between',
             gap: 22,
             marginTop: 15,
-            marginBottom: 30,
+            marginBottom: 25,
             marginLeft: 16,
             marginRight: 16
         },
@@ -197,23 +200,29 @@ const stlyes = StyleSheet.create(
             gap: 5
         },
         footer: {
-            height: 85,
+            height: 88,
             width: '100%',
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between',
-
+            justifyContent: 'space-evenly'
         },
         BtnGaragem: {
-            alignSelf: 'center',
-            marginLeft: 70
+            alignItems: 'center'
         },
+
         BtnPerfil: {
-            lignSelf: 'center',
-            marginRight: 70,
-            marginBottom: 10
+            alignItems: 'center',
+            marginTop: 7
+        },
+        
+        TextBtn: {
+            color: '#fff',
+            fontFamily: 'Poppins_400Regular'
+        },
+        TextBtnPerfil: {
+            color: '#fff',
+            fontFamily: 'Poppins_400Regular',
+            marginTop: 5
         }
-        
-        
     }
 )
