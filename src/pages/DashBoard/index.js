@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-export default function Cadastro() {
+export default function DashBoard() {
     const veiculos = [
   { id: "1", nome: "Carro 1", ano: "2000", cor: "branco"},
   { id: "2", nome: "Carro 2", ano: "2000", cor: "branco"},
@@ -76,7 +76,7 @@ export default function Cadastro() {
   renderItem={({ item }) => (
     <View style={stlyes.cardcontainer}>
         <View>
-            <TouchableOpacity onPress={ ()=> navigation.navigate('Cadastro')}>
+            <TouchableOpacity onPress={ ()=> navigation.navigate('Veículos')}>
             <Image
                 source={require('../../../assets/Rectangle 11.png')}
                 style={stlyes.logo}
@@ -156,7 +156,9 @@ const stlyes = StyleSheet.create(
             marginTop: 15,
             marginBottom: 25,
             marginLeft: 16,
-            marginRight: 16
+            marginRight: 16,
+            alignSelf: 'center',
+            alignItems: 'center'
         },
         areaBtnAdd: {
             flexDirection: 'row',
@@ -166,7 +168,8 @@ const stlyes = StyleSheet.create(
             height: 34,
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: 8
+            padding: 8,
+            alignSelf: 'center'
         },
         areaBtnFilter: {
             backgroundColor: '#fff',

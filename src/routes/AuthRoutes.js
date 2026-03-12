@@ -1,8 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import Login from '../pages/DashBoard';
-import Cadastro from '../pages/Veículos';
+import DashBoard from '../pages/DashBoard';
+import Veículos from "../pages/Veículos";
 
 const AuthStack = createNativeStackNavigator();
 
@@ -11,14 +11,14 @@ function AuthRoutes() {
         <AuthStack.Navigator>
            
             <AuthStack.Screen 
-                name= "Login"
-                component={Login}
+                name= "DashBoard"
+                component={DashBoard}
                 options={{ headerShown: false }}
             />
 
             <AuthStack.Screen 
-                name= "Cadastro"
-                component={Cadastro} 
+                name= "Veículos"
+                component={Veículos} 
                 options={{ headerShown: false }}
             />
 

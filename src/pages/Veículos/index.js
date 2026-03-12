@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-export default function Cadastro() {
+export default function Veículos() {
 
     const veiculos = [
         { id: "1", nome: "Carro 1", ano: "2000", cor: "branco" },
@@ -58,7 +58,7 @@ export default function Cadastro() {
                     <View style={stlyes.areasLogo}>
 
                         <View style={stlyes.BtnCard}>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={ ()=> navigation.navigate('DashBoard')}>
                                 <Ionicons name="arrow-back" size={22} color="#fff" />
                             </TouchableOpacity>
                         </View>
