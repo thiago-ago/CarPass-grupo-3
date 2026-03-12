@@ -46,36 +46,33 @@ export default function Cadastro() {
     >
             
                 <View style={stlyes.AreaImageMyCar}>
-                    <Image  style={stlyes.logo}
-                        source={require('../../../assets/Rectangle 16.png')}
-                    />
+    <Image
+        style={stlyes.logoCard}
+        source={require('../../../assets/Rectangle 16.png')}
+    />
 
-                    <View style={stlyes.areasLogo}>
-                        <LinearGradient
-                        colors={['rgba(0,0,0,0.6)', 'transparent']}
-                        style={stlyes.overlay}
-                    >
-                            <TouchableOpacity>
-                            <Ionicons name="arrow-back" size={22} color="#fff" />
-                            </TouchableOpacity>
-                        </LinearGradient>
-                        <View>
-                            <LinearGradient
-                        colors={['rgba(0,0,0,0.6)', 'transparent']}
-                        style={stlyes.overlay}
-                    >
-                             <TouchableOpacity>
-                                <Ionicons name="trash-outline" size={20} color="#fff" />
-                            </TouchableOpacity>
+    <View style={stlyes.areasLogo}>
+        <View style={stlyes.BtnCard}>
+            <TouchableOpacity>
+                <Ionicons name="arrow-back" size={22} color="#fff" />
+            </TouchableOpacity>
+        </View>
 
-                            <TouchableOpacity >
-                                <Ionicons name="create-outline" size={20} color="#fff" />
-                            </TouchableOpacity>
-                        </LinearGradient>
-                        </View>
-                    </View>
-
+        <View style={stlyes.BtnTrashEdit}>
+            <View style={stlyes.BtnCard}>
+                <TouchableOpacity>
+                    <Ionicons name="trash-outline" size={20} color="#fff" />
+                </TouchableOpacity>
             </View>
+
+            <View style={stlyes.BtnCard}>
+                <TouchableOpacity>
+                    <Ionicons name="create-outline" size={20} color="#fff" />
+                </TouchableOpacity>
+            </View>
+        </View>
+    </View>
+</View>
 
            <View style={stlyes.LinhaMyCard}>
                 <Text>
@@ -205,10 +202,12 @@ const stlyes = StyleSheet.create(
             alignItems:'center',
             alignSelf: 'center',
             marginLeft: 27,
-            marginTop: 18
+            marginTop: 18,
         },
-
         logo:{
+            resizeMode:'contain',
+        },
+        logoCard:{
             resizeMode:'contain',
             position: 'absolute',
             zIndex: 2
@@ -217,17 +216,29 @@ const stlyes = StyleSheet.create(
             position: 'absolute',
             zIndex: 3,
             flexDirection: 'row',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            alignSelf: 'flex-start'
         },
-        overlay: {
-            borderRadius: 8,
-            alignItems: 'center'
+        BtnCard: {
+            backgroundColor: 'rgba(215, 9, 68, 0.6)',
+            alignItems: 'center',
+            width: 30,
+            height: 26,
+            marginTop: 5,
+            justifyContent: 'center',
+            borderRadius: 10,
+            marginLeft: 5
         },
         AreaMyCar:{
     width:'91%',
     borderRadius:8,
     alignSelf:'center',
 
+},
+BtnTrashEdit: {
+    gap: 5,
+    flexDirection: 'row',
+    paddingLeft: 210
 },
 
 AreaImageMyCar: {
@@ -236,8 +247,7 @@ AreaImageMyCar: {
     borderTopRightRadius: 8,
     width: '100%',
     height: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'baseline',
     overflow: 'hidden',
     marginBottom: 10,
     
