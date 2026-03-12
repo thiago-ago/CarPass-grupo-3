@@ -111,13 +111,13 @@ export default function DashBoard() {
         end={{x:1,y:0}}
         style={stlyes.footer}
  >
-        <TouchableOpacity style={stlyes.BtnGaragem}>
+        <TouchableOpacity style={stlyes.BtnGaragem} onPress={ ()=> navigation.navigate('DashBoard')}>
             <Image
                 source={require('../../../assets/Garagem.png')}
             />
             <Text style={stlyes.TextBtn}>Garagem</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={stlyes.BtnPerfil}>
+        <TouchableOpacity style={stlyes.BtnPerfil} onPress={ ()=> navigation.navigate('Perfil')}>
              <Image
                 source={require('../../../assets/Vector.png')}
             />

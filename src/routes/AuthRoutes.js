@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import DashBoard from '../pages/DashBoard';
 import Veículos from "../pages/Veículos";
+import Perfil from '../pages/Perfil';
 
 const AuthStack = createNativeStackNavigator();
 
@@ -19,6 +20,12 @@ function AuthRoutes() {
             <AuthStack.Screen 
                 name= "Veículos"
                 component={Veículos} 
+                options={{ headerShown: false }}
+            />
+
+            <AuthStack.Screen 
+                name= "Perfil"
+                component={Perfil} 
                 options={{ headerShown: false }}
             />
 
