@@ -1,11 +1,17 @@
 import React from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, FlatList } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-
-export default function Login() {
+export default function Cadastro() {
+    const veiculos = [
+  { id: "1", nome: "Carro 1", ano: "2000", cor: "branco"},
+  { id: "2", nome: "Carro 2", ano: "2000", cor: "branco"},
+  { id: "3", nome: "Carro 3", ano: "2000", cor: "branco"},
+  { id: "4", nome: "Carro 4", ano: "2000", cor: "branco"}
+];
     const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_700Bold
@@ -16,88 +22,172 @@ export default function Login() {
     const navigation = useNavigation();
     
     return(
+
+        
        <LinearGradient
   colors={['#666666', '#000000']}
-  style={stlyes.containerLogin}
+  style={stlyes.container}
   start={{x:0,y:0}} 
   end={{x:1,y:0}}
 >
 
-    <View style={stlyes.areaCadastro}>
-        <Text style={stlyes.textBtn} >Ainda não tem uma conta?</Text>
-
-        <TouchableOpacity onPress={ ()=> navigation.navigate('Cadastro')} >
-            <LinearGradient
-            colors={['#800427', '#D70944']}
-            start={{x:0,y:0}} 
-            end={{x:1,y:0}}
-            style={stlyes.BtnCadastro}
-            >
-            <Text style={stlyes.textBtn}>Cadastre-se</Text>
-            </LinearGradient>
-        </TouchableOpacity>
-    </View>
-
-
     <View style={stlyes.areaImg}>
-        <Image 
-        source={require('../../../assets/carpass 1.png')}
-        style={stlyes.logo}
-        />
-    </View>
-
+            <Image 
+            source={require('../../../assets/Logo v1.png')}
+            style={stlyes.logo}
+            />
+        </View>
     
     <LinearGradient 
-        style={stlyes.RetanguloPequeno}
         colors={['#800427', '#D70944']}
         start={{x:0,y:0}} 
         end={{x:1,y:0}}
-    />
-
-    
-    <LinearGradient 
-        style={stlyes.RetanguloGrande}
-        colors={['#800427', '#D70944']}
-        start={{x:0,y:0}} 
-        end={{x:1,y:0}}
+        style={stlyes.AreaMyCar}
     >
-            <View style={stlyes.AreaTitulo}>
-                <Text style={stlyes.H1}>Faça seu login</Text>
-            </View>
-
-            <View style={stlyes.areaInput} >
-                    <TextInput 
-                    placeholder="Digite seu nome *"
-                    placeholderTextColor="#6b6969"
-                    style={{ fontFamily: 'Poppins_400Regular', alignSelf: 'flex-start', marginBottom: 8}}
+            
+                <View style={stlyes.AreaImageMyCar}>
+                    <Image  style={stlyes.logo}
+                        source={require('../../../assets/Rectangle 16.png')}
                     />
+
+                    <View style={stlyes.areasLogo}>
+                        <LinearGradient
+                        colors={['rgba(0,0,0,0.6)', 'transparent']}
+                        style={stlyes.overlay}
+                    >
+                            <TouchableOpacity>
+                            <Ionicons name="arrow-back" size={22} color="#fff" />
+                            </TouchableOpacity>
+                        </LinearGradient>
+                        <View>
+                            <LinearGradient
+                        colors={['rgba(0,0,0,0.6)', 'transparent']}
+                        style={stlyes.overlay}
+                    >
+                             <TouchableOpacity>
+                                <Ionicons name="trash-outline" size={20} color="#fff" />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity >
+                                <Ionicons name="create-outline" size={20} color="#fff" />
+                            </TouchableOpacity>
+                        </LinearGradient>
+                        </View>
+                    </View>
+
             </View>
 
-            <View style={stlyes.areaInput}>
-                <TextInput 
-                placeholder="Digite sua senha *"
-                placeholderTextColor="#6b6969"
-                style={{ fontFamily: 'Poppins_400Regular', alignSelf: 'flex-start', marginBottom: 8}}
-                />
+           <View style={stlyes.LinhaMyCard}>
+                <Text>
+                    <Text style={stlyes.label}>Marca: </Text>
+                    <Text style={stlyes.valor}>Mazda</Text>
+                </Text>
+
+                <Text>
+                    <Text style={stlyes.label}>Cor: </Text>
+                    <Text style={stlyes.valor}>Laranja</Text>
+                </Text>
+        </View>
+
+            <View style={stlyes.LinhaMyCard}>
+                <Text>
+                    <Text style={stlyes.label}>Modelo: </Text>
+                    <Text style={stlyes.valor}>RX-7</Text>
+                </Text>
+
+                <Text>
+                    <Text style={stlyes.label}>Placa: </Text>
+                    <Text style={stlyes.valor}>RRRRRR</Text>
+                </Text>
+        </View>
+
+
+            <View style={stlyes.LinhaMyCard}>
+                <Text>
+                    <Text style={stlyes.label}>Ano de fabricação: </Text>
+                    <Text style={stlyes.valor}>2002</Text>
+                </Text>
+
+                <Text>
+                    <Text style={stlyes.label}>Quilometragem: </Text>
+                    <Text style={stlyes.valor}>5.000 km</Text>
+                </Text>
+        </View>
+
+
+            <View style={{backgroundColor: '#fff', width: '100%', height: 0.5, marginBottom: 15}}></View>
+
+            <View style={{paddingLeft: 5, marginBottom: 5}}>
+                <Text style={stlyes.label}>Descrição</Text>
+                <Text style={stlyes.valor}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus id quam venenatis turpis rutrum dignissim. Etiam tincidunt tortor non dui  fringilla molestie.
+                </Text>
             </View>
 
-            <View style={{alignContent: 'flex-end', paddingLeft: 32, marginTop: 8}}>
-                <TouchableOpacity>
-                    <Text style={{fontSize: 12, color: '#fff', fontFamily: 'Poppins_400Regular'}}>
-                        Esqueceu a senha?
-                    </Text>
-                </TouchableOpacity>
-            </View>
+       
 
-            <View style={stlyes.BtnConfirmar}>
-                <TouchableOpacity>
-                    <Text style={{color: '#000000', fontSize: 24, fontFamily: 'Poppins_700Bold', alignItems: 'center', justifyContent: 'center'}}>Confirmar</Text>
-                </TouchableOpacity>
-            </View>
+  
 
-    </LinearGradient>
+        </LinearGradient>
 
+        <View style={{backgroundColor: '#fff', width: '100%', height: 0.5, marginBottom: 15, marginTop: 20}}></View>
+
+  <View style={stlyes.areaTitle}>
+    <Text style={stlyes.Title}>
+        Serviços
+    </Text>
+  </View>
     
+    <FlatList
+      data={veiculos}
+      keyExtractor={(item) => item.id}
+      contentContainerStyle={{ paddingHorizontal: 10 }}
+      renderItem={({ item }) => (
+            <LinearGradient 
+        colors={['#800427', '#D70944']}
+        start={{x:0,y:0}} 
+        end={{x:1,y:0}}
+        style={stlyes.containerServiços}
+        >
+            <View style={stlyes.Serviço}>
+                    <Text style={stlyes.label}>Troca de Óleo</Text>
+                    <Text style={stlyes.valor}>05/02/2025</Text>
+                    <Text style={stlyes.valor}>4800 km</Text>
+            </View>
+
+            <View style={{height: 53, width: 1, backgroundColor: '#fff', margin: 10}}></View>
+
+            <View style={stlyes.Oficina}> 
+                <Text style={stlyes.label}>Oficina Dois Irmãos</Text>
+                <Text style={stlyes.valor}>R$ 250,00</Text>
+            </View>
+
+        </LinearGradient>
+      )}
+      />
+   
+
+ <LinearGradient 
+        colors={['#800427', '#D70944']}
+        start={{x:0,y:0}} 
+        end={{x:1,y:0}}
+        style={stlyes.footer}
+ >
+        <TouchableOpacity style={stlyes.BtnGaragem}>
+            <Image
+                source={require('../../../assets/Garagem.png')}
+            />
+            <Text style={stlyes.TextBtn}>Garagem</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={stlyes.BtnPerfil}>
+             <Image
+                source={require('../../../assets/Vector.png')}
+            />
+            <Text style={stlyes.TextBtnPerfil}>Perfil</Text>
+        </TouchableOpacity>
+   
+ </LinearGradient>
+
 
 </LinearGradient>
     )
@@ -105,91 +195,132 @@ export default function Login() {
 
 const stlyes = StyleSheet.create(
     {
-        containerLogin: {
+        container: {
             flex: 1,
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-        },
-            areaCadastro: {
-            marginTop: 40,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 10,
-            padding: 10,
-        },
-        BtnCadastro: {
-            paddingVertical: 6,
-            paddingHorizontal: 14,
-            borderRadius: 20,
-            justifyContent: 'center',
-            alignItems: 'center'
-        },
-        textBtn:{
-            color:'#fff',
-            fontWeight:'600',
-            fontFamily: 'Poppins_400Regular'
+            alignItems: 'stretch',
+            justifyContent: 'flex-start'
         },
         areaImg:{               
             justifyContent:'center',
             alignItems:'center',
-            marginBottom: 730
+            alignSelf: 'center',
+            marginLeft: 27,
+            marginTop: 18
         },
 
         logo:{
-            width:217,
-            height:217,
-            resizeMode:'contain'
-        },
-
-        RetanguloGrande: {
-            width: '100%',
-            height: 528,
-            borderTopLeftRadius: 40,
-            borderTopRightRadius: 40,
+            resizeMode:'contain',
             position: 'absolute',
-            bottom: 0,
             zIndex: 2
         },
-        RetanguloPequeno: {
-            width: '80%',
-            height: 80,
-            borderRadius: 25,
+        areasLogo: {
             position: 'absolute',
-            bottom: 468,
+            zIndex: 3,
+            flexDirection: 'row',
+            justifyContent: 'space-between'
+        },
+        overlay: {
+            borderRadius: 8,
+            alignItems: 'center'
+        },
+        AreaMyCar:{
+    width:'91%',
+    borderRadius:8,
+    alignSelf:'center',
+
+},
+
+AreaImageMyCar: {
+    position: 'relative',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    width: '100%',
+    height: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    marginBottom: 10,
+    
+},
+
+LinhaMyCard:{
+    flexDirection:'row',
+    justifyContent: 'space-around',
+    gap: 10,
+    marginBottom:8,
+   
+},
+        label:{
+            fontFamily: 'Poppins_700Bold',
+            color: '#fff',
+            fontSize: 11
+        },
+        valor:{
+            fontFamily: 'Poppins_400Regular',
+            color: '#fff',
+            fontSize: 11
+        },
+        
+        areaTitle: {
+            alignSelf: 'flex-start',
+            marginLeft: 20,
+            marginBottom: 18
+        },
+        Title: {
+            color: '#fff',
+            opacity: 0.62,
+            fontWeight: 'bold'
+        },
+        containerServiços: {
             alignSelf: 'center',
-            zIndex: 1
-        },
-        AreaTitulo: {
-            marginTop:50,
-            marginBottom: 40,
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'space-around',
+            flexDirection: 'row',
+            borderRadius: 8,
+            width: 336,
+            height: 73,
+            marginBottom: 30
         },
-        H1: {
-            color:'#fff',
-            fontSize: 32,
-            fontFamily: 'Poppins_700Bold'
-        },
-        areaInput: {
-            width: 300,
-            height: 60,
-            alignItems: 'center',
+        Serviço: {
+            height: '45%',
+            width: '45%',
+            alignSelf: 'center',
             justifyContent: 'center',
-            backgroundColor: '#fff',
-            borderRadius: 16,
-            marginTop: 30,
-            alignSelf: 'center',
-            padding: 6
+            flexDirection: 'column',
+            alignItems: 'center'
         },
-        BtnConfirmar: {
+        Oficina: {
+            height: '45%',
+            width: '45%',
             alignSelf: 'center',
-            width: 317,
-            height: 53,
-            backgroundColor: '#fff',
-            alignItems: 'center',
             justifyContent: 'center',
-            marginTop: 50,
-            borderRadius: 14
+            flexDirection: 'column',
+            alignItems: 'center'
+        },
+        footer: {
+            height: 88,
+            width: '100%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-evenly'
+        },
+        BtnGaragem: {
+            alignItems: 'center'
+        },
+
+        BtnPerfil: {
+            alignItems: 'center',
+            marginTop: 7
+        },
+        
+        TextBtn: {
+            color: '#fff',
+            fontFamily: 'Poppins_400Regular'
+        },
+        TextBtnPerfil: {
+            color: '#fff',
+            fontFamily: 'Poppins_400Regular',
+            marginTop: 5
         }
     }
 )

@@ -76,10 +76,12 @@ export default function Cadastro() {
   renderItem={({ item }) => (
     <View style={stlyes.cardcontainer}>
         <View>
+            <TouchableOpacity onPress={ ()=> navigation.navigate('Cadastro')}>
             <Image
                 source={require('../../../assets/Rectangle 11.png')}
                 style={stlyes.logo}
             />
+            </TouchableOpacity>
         </View >
 
         <View style={stlyes.LinhaCard}>
