@@ -8,9 +8,17 @@ export default function AppRoutes() {
   return (
     <Stack.Navigator>
       
-      <Stack.Screen name="DashBoard" component={DashBoard} />
+      <Stack.Screen 
+        name="DashBoard" 
+        component={DashBoard} 
+        options={{ headerShown: false }}
+      />
 
-       <Stack.Screen name="Veículos" component={Veículos} />
+       <Stack.Screen 
+        name="Veículos" 
+        component={Veículos} 
+        options={{ headerShown: false }}
+       />
 
     </Stack.Navigator>
   );
