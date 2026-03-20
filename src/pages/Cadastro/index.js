@@ -1,130 +1,151 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import { AuthContext } from "../../context/auth";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 
-
 export default function Cadastro() {
     const [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_700Bold
+        Poppins_400Regular,
+        Poppins_700Bold
     });
-    if (!fontsLoaded) {
-    return null;
-  }
+
     const navigation = useNavigation();
-    
-    return(
-       <LinearGradient
-  colors={['#666666', '#000000']}
-  style={stlyes.containerLogin}
-  start={{x:0,y:0}} 
-  end={{x:1,y:0}}
->
+    const { register } = useContext(AuthContext);
+    const [nome, setNome] = useState('');
+    const [cpf, setCpf] = useState('');
+    const [telefone, setTelefone] = useState('');
+    const [email, setEmail] = useState('');
+    const [senha, setSenha] = useState('');
+    const [confirmasenha, setConfirmaSenha] = useState('');
 
-    <View style={stlyes.areaCadastro}>
-        <Text style={stlyes.textBtn} >Já tem uma conta?</Text>
+    if (!fontsLoaded) {
+        return null;
+    }
 
-        <TouchableOpacity onPress={ ()=> navigation.navigate('Login')} >
-            <LinearGradient
-            colors={['#800427', '#D70944']}
-            start={{x:0,y:0}} 
-            end={{x:1,y:0}}
-            style={stlyes.BtnCadastro}
-            >
-            <Text style={stlyes.textBtn}>Login</Text>
-            </LinearGradient>
-        </TouchableOpacity>
-    </View>
+    function handleRegister() {
+        register(nome, email, cpf, telefone, senha, confirmasenha);
+    }
 
+    return (
+        <LinearGradient
+            colors={['#666666', '#000000']}
+            style={stlyes.containerLogin}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+        >
+            <View style={stlyes.areaCadastro}>
+                <Text style={stlyes.textBtn}>Já tem uma conta?</Text>
 
-    <View style={stlyes.areaImg}>
-        <Image 
-        source={require('../../../assets/carpass 1.png')}
-        style={stlyes.logo}
-        />
-    </View>
-
-    
-    <LinearGradient 
-        style={stlyes.RetanguloPequeno}
-        colors={['#800427', '#D70944']}
-        start={{x:0,y:0}} 
-        end={{x:1,y:0}}
-    />
-
-    
-    <LinearGradient 
-        style={stlyes.RetanguloGrande}
-        colors={['#800427', '#D70944']}
-        start={{x:0,y:0}} 
-        end={{x:1,y:0}}
-    >
-            <View style={stlyes.AreaTitulo}>
-                <Text style={stlyes.H1}>Seja bem-vindo!</Text>
-            </View>
-
-            <View style={stlyes.areaInput} >
-                    <TextInput 
-                    placeholder="Nome *"
-                    placeholderTextColor="#6b6969"
-                    style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5}}
-                    />
-            </View>
-
-             <View style={stlyes.areaInput} >
-                    <TextInput 
-                    placeholder="e-mail *"
-                    placeholderTextColor="#6b6969"
-                    style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5}}
-                    />
-            </View>
-
-             <View style={stlyes.areaInput} >
-                    <TextInput 
-                    placeholder="CPF *"
-                    placeholderTextColor="#6b6969"
-                    style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5}}
-                    />
-            </View>
-
-             <View style={stlyes.areaInput} >
-                    <TextInput 
-                    placeholder="Telefone *"
-                    placeholderTextColor="#6b6969"
-                    style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5}}
-                    />
-            </View>
-
-             <View style={stlyes.areaInput} >
-                    <TextInput 
-                    placeholder="Senha *"
-                    placeholderTextColor="#6b6969"
-                    style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5}}
-                    />
-            </View>
-
-             <View style={stlyes.areaInput} >
-                    <TextInput 
-                    placeholder="Confirme sua senha *"
-                    placeholderTextColor="#6b6969"
-                    style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5}}
-                    />
-            </View>
-
-            <View style={stlyes.BtnConfirmar}>
-                <TouchableOpacity>
-                    <Text style={{color: '#000000', fontSize: 24, fontFamily: 'Poppins_700Bold', alignItems: 'center', justifyContent: 'center'}}>Cadastrar</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                    <LinearGradient
+                        colors={['#800427', '#D70944']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={stlyes.BtnCadastro}
+                    >
+                        <Text style={stlyes.textBtn}>Login</Text>
+                    </LinearGradient>
                 </TouchableOpacity>
             </View>
 
-    </LinearGradient>
+            <View style={stlyes.areaImg}>
+                <Image
+                    source={require('../../../assets/carpass 1.png')}
+                    style={stlyes.logo}
+                />
+            </View>
 
-    
+            <LinearGradient
+                style={stlyes.RetanguloPequeno}
+                colors={['#800427', '#D70944']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+            />
 
-</LinearGradient>
-    )
+            <LinearGradient
+                style={stlyes.RetanguloGrande}
+                colors={['#800427', '#D70944']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+            >
+                <View style={stlyes.AreaTitulo}>
+                    <Text style={stlyes.H1}>Seja bem-vindo!</Text>
+                </View>
+
+                <View style={stlyes.areaInput}>
+                    <TextInput
+                        placeholder="Nome *"
+                        placeholderTextColor="#6b6969"
+                        style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5 }}
+                        value={nome}
+                        onChangeText={(text) => setNome(text)}
+                    />
+                </View>
+
+                <View style={stlyes.areaInput}>
+                    <TextInput
+                        placeholder="e-mail *"
+                        placeholderTextColor="#6b6969"
+                        style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5 }}
+                        value={email}
+                        onChangeText={(text) => setEmail(text)}
+                    />
+                </View>
+
+                <View style={stlyes.areaInput}>
+                    <TextInput
+                        placeholder="CPF *"
+                        placeholderTextColor="#6b6969"
+                        style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5 }}
+                        value={cpf}
+                        onChangeText={(text) => setCpf(text)}
+                    />
+                </View>
+
+                <View style={stlyes.areaInput}>
+                    <TextInput
+                        placeholder="Telefone *"
+                        placeholderTextColor="#6b6969"
+                        style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5 }}
+                        value={telefone}
+                        onChangeText={(text) => setTelefone(text)}
+                    />
+                </View>
+
+                <View style={stlyes.areaInput}>
+                    <TextInput
+                        placeholder="Senha *"
+                        placeholderTextColor="#6b6969"
+                        style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5 }}
+                        value={senha}
+                        onChangeText={(text) => setSenha(text)}
+                        secureTextEntry
+                    />
+                </View>
+
+                <View style={stlyes.areaInput}>
+                    <TextInput
+                        placeholder="Confirme sua senha *"
+                        placeholderTextColor="#6b6969"
+                        style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5 }}
+                        value={confirmasenha}
+                        onChangeText={(text) => setConfirmaSenha(text)}
+                        secureTextEntry
+                    />
+                </View>
+
+                <View style={stlyes.BtnConfirmar}>
+                    <TouchableOpacity onPress={handleRegister}>
+                        <Text style={{ color: '#000000', fontSize: 24, fontFamily: 'Poppins_700Bold' }}>
+                            Cadastrar
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </LinearGradient>
+        </LinearGradient>
+    );
 }
 
 const stlyes = StyleSheet.create(
