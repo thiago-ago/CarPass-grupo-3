@@ -1,10 +1,12 @@
-import React from "react";
+import React,{useContext} from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, FlatList } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Veículos from "../Veículos";
+import AddVeículo from "../AddVeículo";
+import { AuthContext } from "../../context/auth";
 
 export default function DashBoard() {
     const [fontsLoaded] = useFonts({
@@ -36,7 +38,7 @@ export default function DashBoard() {
     
     <View style={stlyes.areaAddCar}>
           <View style={stlyes.areaBtnAdd}>
-                <TouchableOpacity style={stlyes.areaBtnAdd}>
+                <TouchableOpacity style={stlyes.areaBtnAdd} onPress={ ()=> navigation.navigate('AddVeículo')}>
                     <Text style={{ fontFamily: 'Poppins_700Bold'}}>
                         Adicionar veículo
                     </Text>

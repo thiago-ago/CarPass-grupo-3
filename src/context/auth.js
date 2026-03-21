@@ -99,8 +99,30 @@ function AuthProvider({ children }) {
         }
     }
 
+    // ... resto do seu AuthProvider (loadStorage, logar, register) ...
+
+    async function SalvarVeículo(plate, brand, model, year, color, selectedImage, description) {
+        try {
+            const response = await api.post('/veiculos', {
+                placa: plate,
+                marca: brand,
+                modelo: model, // <-- VÍRGULA ADICIONADA AQUI
+                ano_fabricacao: year,
+                cor: color,    // <-- VÍRGULA ADICIONADA AQUI
+                imagem: selectedImage,
+                descricao: description,
+            });
+            console.log("Veículo salvo:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Erro ao salvar veículo:", error.response?.data || error.message);
+            throw error; // Repassamos o erro para a tela exibir o Alert
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ signed: !!user, user, register, logar, loading }}>
+        // AQUI: SalvarVeículo foi adicionado na lista de valores do contexto!
+        <AuthContext.Provider value={{ signed: !!user, user, register, logar, loading, SalvarVeículo }}>
             {children}
         </AuthContext.Provider>
     );

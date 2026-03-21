@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DashBoard from '../pages/DashBoard';
 import Veículos from '../pages/Veículos';
+import AddVeículo from '../pages/AddVeículo'
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,11 @@ export default function AppRoutes() {
         options={{ headerShown: false }}
        />
 
+      <Stack.Screen
+        name="AddVeículo"
+        component={AddVeículo}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 }
