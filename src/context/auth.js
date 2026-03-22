@@ -87,9 +87,10 @@ function AuthProvider({ children }) {
 
             console.log("Resposta do Registro:", response.data);
 
-            if (response.data) {
-                setUser(response.data.user);
-            }
+            // Após o registro, o usuário deve fazer login separadamente
+            // Não definir o usuário aqui, pois não há token
+            // setUser(response.data.user); // Removido para evitar estado inconsistente
+
         } catch (err) {
             console.error("URL que falhou:", err.config?.url);
             console.error("URL Base do Axios:", err.config?.baseURL);
@@ -379,9 +380,38 @@ async function EditarServico(id, veiculo_placa, dadosServico) {
     }
 }
 
+async function DeletarServico(id_servico, veiculo_placa) {
+    try {
+        const usuario_cpf = user?.cpf;
+
+        console.log("--- TENTANDO DELETAR SERVIÇO ---");
+        console.log("ID do Serviço:", id_servico);
+        console.log("Placa do Veículo:", veiculo_placa);
+        console.log("CPF do Usuário:", usuario_cpf);
+
+        if (!id_servico || !veiculo_placa) {
+            throw new Error("ID do serviço ou placa do veículo estão faltando.");
+        }
+
+        const response = await api.delete('/servicos/remove', {
+            params: {
+                id_servico: id_servico,
+                veiculo_placa: veiculo_placa
+            }
+        });
+
+        console.log("SUCESSO: Serviço deletado!", response.data);
+        return response.data;
+
+    } catch (error) {
+        console.error("Erro ao deletar serviço:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
     return (
         
-        <AuthContext.Provider value={{ signed: !!user, user, register, logar, loading, SalvarVeículo, getVeiculos, DeletarVeiculo, getVeiculoPorPlaca, getServicos, SalvarServico, getPessoal, logout, EditarUsuario, EditarVeiculo, EditarServico }}>
+        <AuthContext.Provider value={{ signed: !!user, user, register, logar, loading, SalvarVeículo, getVeiculos, DeletarVeiculo, getVeiculoPorPlaca, getServicos, SalvarServico, getPessoal, logout, EditarUsuario, EditarVeiculo, EditarServico, DeletarServico }}>
             {children}
         </AuthContext.Provider>
     );

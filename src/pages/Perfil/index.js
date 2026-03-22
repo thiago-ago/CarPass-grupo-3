@@ -110,7 +110,7 @@ export default function Perfil() {
     
                 <View style={{flexDirection: 'row', alignSelf: 'center', gap: 10}}>
                     <Ionicons name="call-outline" size={20} color="#fff" />
-                    <Text style={stlyes.Info}>(12)99999-9999</Text>
+                    <Text style={stlyes.Info}>{dadosPessoais?.telefone || '(00) 99999-9999'}</Text>
                 </View>
 
                 <TouchableOpacity onPress={() => console.log('clicou')}>

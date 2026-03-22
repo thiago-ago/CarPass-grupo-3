@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../context/auth";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
@@ -19,13 +20,49 @@ export default function Cadastro() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmasenha, setConfirmaSenha] = useState('');
+    const [loading, setLoading] = useState(false);
 
     if (!fontsLoaded) {
         return null;
     }
 
-    function handleRegister() {
-        register(nome, email, cpf, telefone, senha, confirmasenha);
+    async function handleRegister() {
+        console.log("=== INICIANDO REGISTRO ===");
+        console.log("Dados:", { nome, email, cpf, telefone, senha, confirmasenha });
+
+        if (!nome || !email || !cpf || !telefone || !senha || !confirmasenha) {
+            Alert.alert("Erro", "Preencha todos os campos obrigatórios.");
+            return;
+        }
+
+        if (senha !== confirmasenha) {
+            Alert.alert("Erro", "As senhas não coincidem.");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            console.log("Chamando função register...");
+            
+            await register(nome, email, cpf, telefone, confirmasenha, senha);
+            
+            console.log("Registro bem-sucedido! Exibindo alert...");
+            
+            Alert.alert("✓ Sucesso!", "Conta criada com sucesso!\n\nFaça login para continuar.", [
+                { text: "OK", onPress: () => {
+                    console.log("Navegando para Login...");
+                    navigation.navigate('Login');
+                }}
+            ]);
+        } catch (error) {
+            console.error("Erro no catch:", error);
+            console.error("Erro response:", error.response?.data);
+            
+            const mensagemErro = error.response?.data?.error || error.message || "Erro ao registrar. Tente novamente.";
+            Alert.alert("Erro ao Cadastrar", mensagemErro);
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -137,10 +174,14 @@ export default function Cadastro() {
                 </View>
 
                 <View style={stlyes.BtnConfirmar}>
-                    <TouchableOpacity onPress={handleRegister}>
-                        <Text style={{ color: '#000000', fontSize: 24, fontFamily: 'Poppins_700Bold' }}>
-                            Cadastrar
-                        </Text>
+                    <TouchableOpacity onPress={handleRegister} disabled={loading}>
+                        {loading ? (
+                            <ActivityIndicator size="large" color="#D70944" />
+                        ) : (
+                            <Text style={{ color: '#000000', fontSize: 24, fontFamily: 'Poppins_700Bold' }}>
+                                Cadastrar
+                            </Text>
+                        )}
                     </TouchableOpacity>
                 </View>
             </LinearGradient>
