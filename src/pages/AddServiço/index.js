@@ -1,73 +1,72 @@
 import React, { useState, useContext } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Platform, Alert } from 'react-native';
-import { useNavigation } from "@react-navigation/native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
-import * as ImagePicker from 'expo-image-picker';
+import { AuthContext } from "../../context/auth";
+import Perfil from "../Perfil";
 
-// IMPORTAÇÃO DO CONTEXTO (Verifique se o caminho da pasta está correto para o seu projeto)
-import { AuthContext } from "../../context/auth"; 
+export default function AddServiço() {
+    const navigation = useNavigation();
+    const route = useRoute();
+    const { SalvarServico } = useContext(AuthContext);
 
-export default function AddVeículo() {
-    // PUXANDO A FUNÇÃO DO CONTEXTO AQUI
-    const { SalvarVeículo } = useContext(AuthContext);
+    const { placa: veiculo_placa } = route.params || {};
+
+    console.log("route.params completos:", route.params);
+    console.log("=== TELA ADD SERVIÇO ABRIU ===");
+    console.log("Placa que chegou via navegação:", veiculo_placa);
+
+    const [descricao, setDescricao] = useState('');
+    const [preco, setPreco] = useState('');
+    const [km, setKm] = useState('');
+    const [oficina, setOficina] = useState('');
+    const [dataRealizacao, setDataRealizacao] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Poppins_700Bold
     });
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [description, setDescription] = useState('');
-    const [placa, setPlaca] = useState('');
-    const [brand, setBrand] = useState('');
-    const [model, setModel] = useState('');
-    const [year, setYear] = useState('');
-    const [color, setColor] = useState('');
-    
-    const navigation = useNavigation();
 
-    const handleImagePicker = async () => {
-        if (Platform.OS !== 'web') {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Aviso', 'Precisamos de permissão para acessar sua galeria.');
-                return;
-            }
+    async function handleConfirmar() {
+        if (!descricao || !preco || !km || !oficina || !dataRealizacao) {
+            Alert.alert("Atenção", "Preencha todos os campos obrigatórios (*)");
+            return;
         }
 
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
+        const precoConvertido = parseFloat(preco.replace(',', '.'));
+        const kmConvertido = parseInt(km, 10);
 
-        // ATUALIZAÇÃO DO EXPO: canceled (com um 'L') e assets[0].uri
-        if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri);
-        }
-    };
-
-    if (!fontsLoaded) {
-        return null;
-    }
-
-    // FUNÇÃO ASSÍNCRONA COM FEEDBACK PARA O USUÁRIO
-    async function handleSaveVehicle() {
-        if (!placa || !brand || !model || !year || !color) {
-            Alert.alert("Aviso", "Por favor, preencha todos os campos obrigatórios (*).");
+        if (isNaN(precoConvertido) || isNaN(kmConvertido)) {
+            Alert.alert("Erro", "Preço ou KM inválido.");
             return;
         }
 
         try {
-            await SalvarVeículo(placa, brand, model, year, color, selectedImage, description);
-            Alert.alert("Sucesso", "Veículo cadastrado com sucesso!");
-            // Limpar os campos ou voltar para a garagem após salvar:
-            navigation.goBack(); 
+            setLoading(true);
+
+            const dados = {
+                descricao,
+                preco: precoConvertido,
+                km: kmConvertido,
+                oficina,
+                data_realizacao: dataRealizacao
+            };
+
+            await SalvarServico(dados, veiculo_placa);
+
+            Alert.alert("Sucesso", "Serviço registrado com sucesso!", [
+                { text: "OK", onPress: () => navigation.goBack() }
+            ]);
         } catch (error) {
-            Alert.alert("Erro", "Não foi possível salvar o veículo.");
+            Alert.alert("Erro", error.response?.data?.error || "Não foi possível salvar o serviço.");
+        } finally {
+            setLoading(false);
         }
     }
+
+    if (!fontsLoaded) return null;
 
     return (
         <LinearGradient
@@ -76,116 +75,105 @@ export default function AddVeículo() {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
         >
-            {/* O RESTO DO SEU RETURN CONTINUA EXATAMENTE IGUAL */}
             <View style={styles.areaImg}>
-                <Image
-                    source={require('../../../assets/Logo v1.png')}
-                    style={styles.logo}
-                />
+                <Image source={require('../../../assets/Logo v1.png')} style={styles.logo} />
             </View>
 
             <View style={styles.separator} />
 
             <View style={styles.areaTitle}>
-                <Text style={styles.title}>Adicionar Veículo</Text>
+                <Text style={styles.title}>
+                    Adicionar Serviço {veiculo_placa ? `para ${veiculo_placa}` : ''}
+                </Text>
             </View>
 
             <View style={styles.areaAdd}>
                 <View style={styles.inputContainer}>
                     <TextInput
-                        placeholder="PLACA *"
+                        placeholder="DESCRIÇÃO *"
                         placeholderTextColor="#6b6969"
                         style={styles.inputText}
-                        onChangeText={setPlaca}
-                        value={placa}
-                    />
-                </View>
-
-
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        placeholder="MARCA *"
-                        placeholderTextColor="#6b6969"
-                        style={styles.inputText}
-                        onChangeText={setBrand}
-                        value={brand}
+                        multiline={true}
+                        numberOfLines={3}
+                        value={descricao}
+                        onChangeText={setDescricao}
                     />
                 </View>
 
                 <View style={styles.inputContainer}>
                     <TextInput
-                        placeholder="MODELO *"
-                        placeholderTextColor="#6b6969"
-                        style={styles.inputText}
-                        onChangeText={setModel}
-                        value={model}
-                    />
-                </View>
-
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        placeholder="ANO DE FABRICAÇÃO *"
+                        placeholder="Preço *"
                         placeholderTextColor="#6b6969"
                         style={styles.inputText}
                         keyboardType="numeric"
-                        onChangeText={setYear}
-                        value={year}
+                        value={preco}
+                        onChangeText={setPreco}
                     />
                 </View>
 
                 <View style={styles.inputContainer}>
                     <TextInput
-                        placeholder="COR *"
+                        placeholder="Km *"
                         placeholderTextColor="#6b6969"
                         style={styles.inputText}
-                        onChangeText={setColor}
-                        value={color}
+                        keyboardType="numeric"
+                        value={km}
+                        onChangeText={setKm}
                     />
                 </View>
 
-                <View style={styles.areaAdd}>
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            placeholder="DESCRIÇÃO"
-                            placeholderTextColor="#6b6969"
-                            style={styles.inputText}
-                            multiline={true}
-                            numberOfLines={3}
-                            onChangeText={setDescription}
-                            value={description}
-                        />
-                    </View>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        placeholder="Oficina *"
+                        placeholderTextColor="#6b6969"
+                        style={styles.inputText}
+                        value={oficina}
+                        onChangeText={setOficina}
+                    />
                 </View>
 
-                <View style={styles.imagePickerContainer}>
-                    {selectedImage ? (
-                        <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
-                    ) : (
-                        <TouchableOpacity onPress={handleImagePicker} style={styles.imagePickerButton}>
-                            <Text style={styles.imagePickerText}>Selecionar foto</Text>
-                        </TouchableOpacity>
-                    )}
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        placeholder="Data da realização (Ex: 21/03/2026) *"
+                        placeholderTextColor="#6b6969"
+                        style={styles.inputText}
+                        value={dataRealizacao}
+                        onChangeText={setDataRealizacao}
+                    />
                 </View>
-
             </View>
 
             <View style={styles.confirmButtonContainer}>
-                <TouchableOpacity onPress={handleSaveVehicle} style={styles.confirmButton}>
-                    <Text style={styles.confirmButtonText}>Confirmar</Text>
+                <TouchableOpacity
+                    style={styles.confirmButton}
+                    onPress={handleConfirmar}
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <ActivityIndicator color="#fff" />
+                    ) : (
+                        <Text style={styles.confirmButtonText}>Confirmar</Text>
+                    )}
                 </TouchableOpacity>
             </View>
 
             <LinearGradient
                 colors={['#800427', '#D70944']}
+                style={styles.footer}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                style={styles.footer}
             >
-                <TouchableOpacity style={styles.garageButton}>
+                <TouchableOpacity
+                    style={styles.garageButton}
+                    onPress={() => navigation.navigate('DashBoard')}
+                >
                     <Image source={require('../../../assets/Garagem.png')} />
                     <Text style={styles.buttonText}>Garagem</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.profileButton}>
+
+                <TouchableOpacity style={styles.profileButton}
+                onPress={()=> navigation.navigate('Perfil')}>
+                
                     <Image source={require('../../../assets/Vector.png')} />
                     <Text style={styles.buttonText}>Perfil</Text>
                 </TouchableOpacity>

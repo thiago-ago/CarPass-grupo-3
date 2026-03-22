@@ -1,16 +1,16 @@
-import React, { useState, useContext } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Platform, Alert } from 'react-native';
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useContext, useEffect } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Platform, Alert, ActivityIndicator } from 'react-native';
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import * as ImagePicker from 'expo-image-picker';
+import Perfil from "../Perfil";
 
-// IMPORTAÇÃO DO CONTEXTO (Verifique se o caminho da pasta está correto para o seu projeto)
 import { AuthContext } from "../../context/auth"; 
 
-export default function AddVeículo() {
-    // PUXANDO A FUNÇÃO DO CONTEXTO AQUI
-    const { SalvarVeículo } = useContext(AuthContext);
+export default function EditVeículo() {
+    
+    const { EditarVeiculo, getVeiculoPorPlaca } = useContext(AuthContext);
 
     const [fontsLoaded] = useFonts({
         Poppins_400Regular,
@@ -23,8 +23,37 @@ export default function AddVeículo() {
     const [model, setModel] = useState('');
     const [year, setYear] = useState('');
     const [color, setColor] = useState('');
+    const [loading, setLoading] = useState(true);
     
     const navigation = useNavigation();
+    const route = useRoute();
+
+    useEffect(() => {
+        async function carregarDados() {
+            if (route.params?.placa) {
+                try {
+                    const dados = await getVeiculoPorPlaca(route.params.placa);
+                    if (dados) {
+                        setPlaca(dados.placa || '');
+                        setBrand(dados.marca || '');
+                        setModel(dados.modelo || '');
+                        setYear(dados.ano_fabricacao?.toString() || '');
+                        setColor(dados.cor || '');
+                        setDescription(dados.descricao || '');
+                        setSelectedImage(dados.imagem || null);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar dados do veículo:', error);
+                    Alert.alert('Erro', 'Não foi possível carregar os dados do veículo.');
+                } finally {
+                    setLoading(false);
+                }
+            } else {
+                setLoading(false);
+            }
+        }
+        carregarDados();
+    }, [route.params?.placa]);
 
     const handleImagePicker = async () => {
         if (Platform.OS !== 'web') {
@@ -42,30 +71,40 @@ export default function AddVeículo() {
             quality: 1,
         });
 
-        // ATUALIZAÇÃO DO EXPO: canceled (com um 'L') e assets[0].uri
         if (!result.canceled) {
             setSelectedImage(result.assets[0].uri);
         }
     };
 
-    if (!fontsLoaded) {
-        return null;
+    if (!fontsLoaded || loading) {
+        return (
+            <View style={{flex: 1, justifyContent: 'center', backgroundColor: '#000'}}>
+                <ActivityIndicator size="large" color="#D70944" />
+            </View>
+        );
     }
 
-    // FUNÇÃO ASSÍNCRONA COM FEEDBACK PARA O USUÁRIO
     async function handleSaveVehicle() {
-        if (!placa || !brand || !model || !year || !color) {
+        if (!brand || !model || !year || !color) {
             Alert.alert("Aviso", "Por favor, preencha todos os campos obrigatórios (*).");
             return;
         }
 
         try {
-            await SalvarVeículo(placa, brand, model, year, color, selectedImage, description);
-            Alert.alert("Sucesso", "Veículo cadastrado com sucesso!");
-            // Limpar os campos ou voltar para a garagem após salvar:
+            const dadosAtualizados = {
+                marca: brand,
+                modelo: model,
+                ano_fabricacao: parseInt(year),
+                cor: color,
+                descricao: description,
+                // imagem pode ser adicionada se necessário
+            };
+
+            await EditarVeiculo(placa, dadosAtualizados);
+            Alert.alert("Sucesso", "Veículo editado com sucesso!");
             navigation.goBack(); 
         } catch (error) {
-            Alert.alert("Erro", "Não foi possível salvar o veículo.");
+            Alert.alert("Erro", "Não foi possível editar o veículo.");
         }
     }
 
@@ -76,7 +115,7 @@ export default function AddVeículo() {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
         >
-            {/* O RESTO DO SEU RETURN CONTINUA EXATAMENTE IGUAL */}
+      
             <View style={styles.areaImg}>
                 <Image
                     source={require('../../../assets/Logo v1.png')}
@@ -87,17 +126,18 @@ export default function AddVeículo() {
             <View style={styles.separator} />
 
             <View style={styles.areaTitle}>
-                <Text style={styles.title}>Adicionar Veículo</Text>
+                <Text style={styles.title}>Editar Veículo</Text>
             </View>
 
             <View style={styles.areaAdd}>
                 <View style={styles.inputContainer}>
                     <TextInput
-                        placeholder="PLACA *"
+                        placeholder="PLACA"
                         placeholderTextColor="#6b6969"
                         style={styles.inputText}
                         onChangeText={setPlaca}
                         value={placa}
+                        editable={false}
                     />
                 </View>
 
@@ -181,11 +221,15 @@ export default function AddVeículo() {
                 end={{ x: 1, y: 0 }}
                 style={styles.footer}
             >
-                <TouchableOpacity style={styles.garageButton}>
+                <TouchableOpacity style={styles.garageButton}
+                onPress={() => navigation.navigate('DashBoard')}
+                >
                     <Image source={require('../../../assets/Garagem.png')} />
                     <Text style={styles.buttonText}>Garagem</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.profileButton}>
+                <TouchableOpacity style={styles.profileButton}
+                onPress={()=> navigation.navigate('Perfil')}
+                >
                     <Image source={require('../../../assets/Vector.png')} />
                     <Text style={styles.buttonText}>Perfil</Text>
                 </TouchableOpacity>
