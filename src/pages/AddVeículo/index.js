@@ -5,11 +5,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import * as ImagePicker from 'expo-image-picker';
 
-// IMPORTAÇÃO DO CONTEXTO (Verifique se o caminho da pasta está correto para o seu projeto)
+
 import { AuthContext } from "../../context/auth"; 
 
 export default function AddVeículo() {
-    // PUXANDO A FUNÇÃO DO CONTEXTO AQUI
+    
     const { SalvarVeículo } = useContext(AuthContext);
 
     const [fontsLoaded] = useFonts({
@@ -42,7 +42,7 @@ export default function AddVeículo() {
             quality: 1,
         });
 
-        // ATUALIZAÇÃO DO EXPO: canceled (com um 'L') e assets[0].uri
+        
         if (!result.canceled) {
             setSelectedImage(result.assets[0].uri);
         }
@@ -52,7 +52,7 @@ export default function AddVeículo() {
         return null;
     }
 
-    // FUNÇÃO ASSÍNCRONA COM FEEDBACK PARA O USUÁRIO
+    
     async function handleSaveVehicle() {
         if (!placa || !brand || !model || !year || !color) {
             Alert.alert("Aviso", "Por favor, preencha todos os campos obrigatórios (*).");
@@ -62,7 +62,7 @@ export default function AddVeículo() {
         try {
             await SalvarVeículo(placa, brand, model, year, color, selectedImage, description);
             Alert.alert("Sucesso", "Veículo cadastrado com sucesso!");
-            // Limpar os campos ou voltar para a garagem após salvar:
+           
             navigation.goBack(); 
         } catch (error) {
             Alert.alert("Erro", "Não foi possível salvar o veículo.");
@@ -76,7 +76,7 @@ export default function AddVeículo() {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
         >
-            {/* O RESTO DO SEU RETURN CONTINUA EXATAMENTE IGUAL */}
+            
             <View style={styles.areaImg}>
                 <Image
                     source={require('../../../assets/Logo v1.png')}

@@ -99,7 +99,7 @@ function AuthProvider({ children }) {
         }
     }
 
-    // ... resto do seu AuthProvider (loadStorage, logar, register) ...
+   
 
     async function getVeiculos() {
         try {
@@ -111,10 +111,10 @@ function AuthProvider({ children }) {
         }
     }
 
-    // CORREÇÃO: Usando FormData para a imagem ser enviada corretamente ao servidor
+   
     async function SalvarVeículo(placa, brand, model, year, color, selectedImage, description) {
     try {
-        // 1. Pegamos o CPF do usuário logado
+    
         const usuario_cpf = user?.cpf;
 
         const data = new FormData();
@@ -125,18 +125,16 @@ function AuthProvider({ children }) {
         data.append('cor', color);
         data.append('descricao', description);
         
-        // 2. Enviamos o CPF, assumindo que seu backend precisa saber de quem é o carro
+       
         if (usuario_cpf) {
              data.append('usuario_cpf', usuario_cpf);
         }
 
-        // 3. Tratamento seguro da imagem
         if (selectedImage) {
             const filename = selectedImage.split('/').pop();
             const match = /\.(\w+)$/.exec(filename);
-            const type = match ? `image/${match[1]}` : `image/jpeg`; // Fallback seguro para jpeg
+            const type = match ? `image/${match[1]}` : `image/jpeg`; 
             
-            // É importante garantir que o objeto de imagem seja passado exatamente assim:
             data.append('imagem', {
                 uri: selectedImage,
                 name: filename,
@@ -144,12 +142,12 @@ function AuthProvider({ children }) {
             });
         }
 
-        console.log("Enviando FormData:", data); // Verifique no console se tudo está correto
+        console.log("Enviando FormData:", data); 
 
         const response = await api.post('/veiculos', data, {
             headers: { 
                 'Content-Type': 'multipart/form-data',
-                Accept: 'application/json', // Boa prática adicionar o Accept
+                Accept: 'application/json', 
             },
         });
         
@@ -291,7 +289,7 @@ async function EditarUsuario(dados) {
         const usuario_cpf = user?.cpf;
 
         const data = new FormData();
-        // REMOVIDO: data.append('placa', placa); -> Agora vai nos 'params' do Axios
+        
         
         data.append('marca', dadosAtualizados.marca);
         data.append('modelo', dadosAtualizados.modelo);
@@ -304,7 +302,7 @@ async function EditarUsuario(dados) {
              data.append('usuario_cpf', usuario_cpf);
         }
 
-        // Tratamento seguro da imagem
+       
         if (novaImagem) {
             const filename = novaImagem.split('/').pop();
             const match = /\.(\w+)$/.exec(filename);
@@ -320,10 +318,10 @@ async function EditarUsuario(dados) {
         console.log("Editando Placa (via parâmetro):", placa);
         console.log("Enviando FormData (corpo):", data);
 
-        // CORREÇÃO: Passando os dados no corpo (data) e a placa nos parâmetros (params)
+        
         const response = await api.put('/veiculos/edicao', data, {
             params: { 
-                placa: placa // <-- PLACA COMO PARÂMETRO DE REQUISIÇÃO
+                placa: placa 
             },
             headers: { 
                 'Content-Type': 'multipart/form-data',
@@ -349,22 +347,21 @@ async function EditarServico(id, veiculo_placa, dadosServico) {
         console.log("Placa (via parâmetro):", veiculo_placa);
         console.log("Novos dados:", dadosServico);
 
-        // Trava de segurança para não enviar requisição quebrada
+        
         if (!id || !veiculo_placa) {
             throw new Error("ID do serviço ou placa do veículo estão faltando.");
         }
 
-        // 1. Montamos o corpo da requisição (os dados que vão ser alterados)
         const corpoRequisicao = {
             descricao: dadosServico.descricao,
             preco: dadosServico.preco,
             km: dadosServico.km,
             oficina: dadosServico.oficina,
             data_realizacao: dadosServico.data_realizacao,
-            usuario_cpf: usuario_cpf // Caso o backend valide se você é o dono
+            usuario_cpf: usuario_cpf 
         };
 
-        // 2. Fazemos o PUT passando o corpo e os parâmetros de rota
+        
         const response = await api.put('/servicos/edicao', corpoRequisicao, {
             params: { 
                 id: id, 

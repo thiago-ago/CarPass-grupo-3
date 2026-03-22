@@ -177,7 +177,7 @@ export default function Perfil() {
                         onPress={async () => {
                             try {
                                 await logout();
-                                navigation.navigate('Login'); // ou 'SignIn', dependendo da rota
+                                navigation.navigate('Login'); 
                             } catch (error) {
                                 console.error('Erro ao fazer logout:', error);
                             }
