@@ -117,12 +117,18 @@ export default function DashBoard() {
                     keyExtractor={(item) => String(item.id || item._id || item.placa)} 
                     numColumns={2}
                     contentContainerStyle={{ paddingHorizontal: 10 }}
-                    renderItem={({ item }) => (
+                    renderItem={({ item }) => {
+                        // Construir a URL completa da imagem
+                        const imageUri = item.imagem 
+                            ? `https://gerenciamento-manutencoes-production.up.railway.app/files/${item.imagem}`
+                            : null;
+                        
+                        return (
                         <View style={stlyes.cardcontainer}>
                             <View>
                                 <TouchableOpacity onPress={() => navigation.navigate('Veículos', { placa: item.placa })}>
                                     <Image
-                                        source={item.imagem ? { uri: item.imagem } : require('../../../assets/Rectangle 11.png')}
+                                        source={imageUri ? { uri: imageUri } : require('../../../assets/Rectangle 11.png')}
                                         style={stlyes.cardImage} 
                                     />
                                 </TouchableOpacity>
@@ -145,13 +151,17 @@ export default function DashBoard() {
                                         <Ionicons name="trash-outline" size={18} color="white" />
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity style={stlyes.LinhaCard}>
+                                    <TouchableOpacity 
+                                        style={stlyes.LinhaCard}
+                                        onPress={() => navigation.navigate('EditVeículo', { placa: item.placa })}
+                                    >
                                         <Ionicons name="create-outline" size={18} color="white"/>
                                     </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
-                    )}
+                        );
+                    }}
                 />
             )}
 

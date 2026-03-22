@@ -158,13 +158,11 @@ export default function AddVeículo() {
                 </View>
 
                 <View style={styles.imagePickerContainer}>
-                    {selectedImage ? (
-                        <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
-                    ) : (
-                        <TouchableOpacity onPress={handleImagePicker} style={styles.imagePickerButton}>
-                            <Text style={styles.imagePickerText}>Selecionar foto</Text>
-                        </TouchableOpacity>
-                    )}
+                    <TouchableOpacity onPress={handleImagePicker} style={styles.imagePickerButton}>
+                        <Text style={styles.imagePickerText}>
+                            {selectedImage ? 'Foto anexada ✓' : 'Selecionar foto'}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
 
             </View>
@@ -275,12 +273,6 @@ const styles = StyleSheet.create({
         color: '#6b6969',
         fontFamily: 'Poppins_400Regular',
         fontSize: 15,
-    },
-    selectedImage: {
-        width: '100%',
-        height: 200,
-        resizeMode: 'cover',
-        borderRadius: 6,
     },
     confirmButtonContainer: {
         marginTop: 15,

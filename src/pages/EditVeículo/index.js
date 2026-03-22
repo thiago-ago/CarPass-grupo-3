@@ -97,14 +97,16 @@ export default function EditVeículo() {
                 ano_fabricacao: parseInt(year),
                 cor: color,
                 descricao: description,
-                // imagem pode ser adicionada se necessário
             };
 
-            await EditarVeiculo(placa, dadosAtualizados);
+            // Verifica se uma nova imagem foi selecionada (não é a URL da API)
+            const novaImagem = selectedImage && selectedImage.startsWith('file://') ? selectedImage : null;
+
+            await EditarVeiculo(placa, dadosAtualizados, novaImagem);
             Alert.alert("Sucesso", "Veículo editado com sucesso!");
-            navigation.goBack(); 
+            navigation.goBack();
         } catch (error) {
-            Alert.alert("Erro", "Não foi possível editar o veículo.");
+            Alert.alert("Erro", error.message || "Não foi possível editar o veículo.");
         }
     }
 
@@ -198,13 +200,11 @@ export default function EditVeículo() {
                 </View>
 
                 <View style={styles.imagePickerContainer}>
-                    {selectedImage ? (
-                        <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
-                    ) : (
-                        <TouchableOpacity onPress={handleImagePicker} style={styles.imagePickerButton}>
-                            <Text style={styles.imagePickerText}>Selecionar foto</Text>
-                        </TouchableOpacity>
-                    )}
+                    <TouchableOpacity onPress={handleImagePicker} style={styles.imagePickerButton}>
+                        <Text style={styles.imagePickerText}>
+                            {selectedImage ? 'Foto selecionada ✓' : 'Selecionar foto'}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
 
             </View>
@@ -319,12 +319,6 @@ const styles = StyleSheet.create({
         color: '#6b6969',
         fontFamily: 'Poppins_400Regular',
         fontSize: 15,
-    },
-    selectedImage: {
-        width: '100%',
-        height: 200,
-        resizeMode: 'cover',
-        borderRadius: 6,
     },
     confirmButtonContainer: {
         marginTop: 15,

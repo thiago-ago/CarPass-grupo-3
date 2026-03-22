@@ -88,7 +88,10 @@ export default function Veículos() {
                     <Image
                         style={stlyes.logoCard}
                         // Se tiver imagem na API, usa ela, senão usa a padrão
-                        source={veiculo.imagem ? { uri: veiculo.imagem } : require('../../../assets/Rectangle 16.png')}
+                        source={veiculo.imagem 
+                            ? { uri: `https://gerenciamento-manutencoes-production.up.railway.app/files/${veiculo.imagem}` } 
+                            : require('../../../assets/Rectangle 16.png')
+                        }
                     />
 
                     <View style={stlyes.areasLogo}>
@@ -345,7 +348,9 @@ const stlyes = StyleSheet.create({
     },
 
     logoCard: {
-        resizeMode: 'contain',
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
         position: 'absolute',
         zIndex: 2
     },

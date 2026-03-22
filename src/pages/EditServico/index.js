@@ -77,7 +77,7 @@ export default function EditServico() {
                 data_realizacao: dataRealizacao
             };
 
-            await EditarServico(veiculo_placa, servico_id, dados);
+            await EditarServico(servico_id, veiculo_placa, dados);
 
             Alert.alert("Sucesso", "Serviço editado com sucesso!", [
                 { text: "OK", onPress: () => navigation.goBack() }

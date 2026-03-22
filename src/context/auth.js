@@ -244,12 +244,152 @@ async function getServicos() {
         }
     }
 
+async function EditarUsuario(dados) {
+        try {
+            const response = await api.put('/usuarios', dados);
+            setUser(response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Erro ao editar usuário:", error);
+            throw error;
+        }
+    }
+
+    async function getPessoal() {
+        try {
+            const response = await api.get('/pessoal');
+            return response.data;
+        } catch (error) {
+            console.error("Erro ao buscar dados pessoais:", error);
+            throw error;
+        }
+    }
+
+    async function logout() {
+        try {
+            setUser(null);
+            await AsyncStorage.removeItem(`@FinToken`);
+            delete api.defaults.headers.common['Authorization'];
+        } catch (error) {
+            console.error("Erro ao fazer logout:", error);
+        }
+    }
+
+    async function EditarUsuario(dados) {
+        try {
+            const response = await api.put('/usuarios/edit', dados);
+            setUser(response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Erro ao editar usuário:", error);
+            throw error;
+        }
+    }
+
+    async function EditarVeiculo(placa, dadosAtualizados, novaImagem = null) {
+    try {
+        const usuario_cpf = user?.cpf;
+
+        const data = new FormData();
+        // REMOVIDO: data.append('placa', placa); -> Agora vai nos 'params' do Axios
+        
+        data.append('marca', dadosAtualizados.marca);
+        data.append('modelo', dadosAtualizados.modelo);
+        data.append('ano_fabricacao', dadosAtualizados.ano_fabricacao);
+        data.append('cor', dadosAtualizados.cor);
+        data.append('descricao', dadosAtualizados.descricao);
+        
+        // Enviamos o CPF
+        if (usuario_cpf) {
+             data.append('usuario_cpf', usuario_cpf);
+        }
+
+        // Tratamento seguro da imagem
+        if (novaImagem) {
+            const filename = novaImagem.split('/').pop();
+            const match = /\.(\w+)$/.exec(filename);
+            const type = match ? `image/${match[1]}` : `image/jpeg`;
+            
+            data.append('imagem', {
+                uri: novaImagem,
+                name: filename,
+                type: type,
+            });
+        }
+
+        console.log("Editando Placa (via parâmetro):", placa);
+        console.log("Enviando FormData (corpo):", data);
+
+        // CORREÇÃO: Passando os dados no corpo (data) e a placa nos parâmetros (params)
+        const response = await api.put('/veiculos/edicao', data, {
+            params: { 
+                placa: placa // <-- PLACA COMO PARÂMETRO DE REQUISIÇÃO
+            },
+            headers: { 
+                'Content-Type': 'multipart/form-data',
+                Accept: 'application/json',
+            },
+        });
+        
+        console.log("Veículo editado com sucesso:", response.data);
+        return response.data;
+        
+    } catch (error) {
+        console.error("Erro ao editar veículo:", error.response?.data || error.message);
+        throw error; 
+    }
+}
+
+async function EditarServico(id, veiculo_placa, dadosServico) {
+    try {
+        const usuario_cpf = user?.cpf;
+
+        console.log("--- TENTANDO EDITAR SERVIÇO ---");
+        console.log("ID do Serviço (via parâmetro):", id);
+        console.log("Placa (via parâmetro):", veiculo_placa);
+        console.log("Novos dados:", dadosServico);
+
+        // Trava de segurança para não enviar requisição quebrada
+        if (!id || !veiculo_placa) {
+            throw new Error("ID do serviço ou placa do veículo estão faltando.");
+        }
+
+        // 1. Montamos o corpo da requisição (os dados que vão ser alterados)
+        const corpoRequisicao = {
+            descricao: dadosServico.descricao,
+            preco: dadosServico.preco,
+            km: dadosServico.km,
+            oficina: dadosServico.oficina,
+            data_realizacao: dadosServico.data_realizacao,
+            usuario_cpf: usuario_cpf // Caso o backend valide se você é o dono
+        };
+
+        // 2. Fazemos o PUT passando o corpo e os parâmetros de rota
+        const response = await api.put('/servicos/edicao', corpoRequisicao, {
+            params: { 
+                id: id, 
+                veiculo_placa: veiculo_placa,
+                usuario_cpf: usuario_cpf
+            }
+        });
+
+        console.log("SUCESSO: Serviço editado!", response.data);
+        return response.data;
+
+    } catch (error) {
+        console.error("Erro ao editar serviço:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
     return (
         
-        <AuthContext.Provider value={{ signed: !!user, user, register, logar, loading, SalvarVeículo, getVeiculos, DeletarVeiculo, getVeiculoPorPlaca, getServicos, SalvarServico }}>
+        <AuthContext.Provider value={{ signed: !!user, user, register, logar, loading, SalvarVeículo, getVeiculos, DeletarVeiculo, getVeiculoPorPlaca, getServicos, SalvarServico, getPessoal, logout, EditarUsuario, EditarVeiculo, EditarServico }}>
             {children}
         </AuthContext.Provider>
     );
 }
 
 export default AuthProvider;
+
+   
