@@ -133,7 +133,7 @@ export default function Cadastro() {
 
                 <View style={stlyes.areaInput}>
                     <TextInput
-                        placeholder="CPF *"
+                        placeholder="CPF * ex: 111.111.111-11"
                         placeholderTextColor="#6b6969"
                         style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5 }}
                         value={cpf}
@@ -143,7 +143,7 @@ export default function Cadastro() {
 
                 <View style={stlyes.areaInput}>
                     <TextInput
-                        placeholder="Telefone *"
+                        placeholder="Telefone * ex: (11)11111-1111"
                         placeholderTextColor="#6b6969"
                         style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, alignSelf: 'flex-start', position: 'absolute', marginBottom: 5 }}
                         value={telefone}
