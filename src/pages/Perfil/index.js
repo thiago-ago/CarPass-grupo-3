@@ -4,23 +4,29 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import * as ImagePicker from 'expo-image-picker'; // IMPORTAÇÃO DO IMAGE PICKER
 import { AuthContext } from "../../context/auth";
 
 export default function Perfil() {
-     const [fontsLoaded] = useFonts({
+    const [fontsLoaded] = useFonts({
         Poppins_400Regular,
         Poppins_700Bold
     });
 
     const navigation = useNavigation();
     const { getPessoal, logout, EditarUsuario } = useContext(AuthContext);
+    
     const [dadosPessoais, setDadosPessoais] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+    
+    // Estados do Modal
     const [editNome, setEditNome] = useState('');
     const [editEmail, setEditEmail] = useState('');
     const [editTelefone, setEditTelefone] = useState('');
     const [editSenha, setEditSenha] = useState('');
     const [editConfirmaSenha, setEditConfirmaSenha] = useState('');
+    const [editFoto, setEditFoto] = useState(null); // NOVO ESTADO PARA A FOTO
+    
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -28,10 +34,12 @@ export default function Perfil() {
             try {
                 const dados = await getPessoal();
                 setDadosPessoais(dados);
+                
                 // Preenche os campos de edição
                 setEditNome(dados?.nome || '');
                 setEditEmail(dados?.email || '');
                 setEditTelefone(dados?.telefone || '');
+                setEditFoto(dados?.foto || null); // Carrega a foto atual para edição
             } catch (error) {
                 console.error('Erro ao carregar dados pessoais:', error);
             }
@@ -41,6 +49,27 @@ export default function Perfil() {
 
     const abrirModalEdicao = () => {
         setModalVisible(true);
+    };
+
+    // NOVA FUNÇÃO: Selecionar Imagem da Galeria
+    const escolherImagem = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        
+        if (status !== 'granted') {
+            Alert.alert('Permissão negada', 'Precisamos de permissão para acessar suas fotos.');
+            return;
+        }
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1], // Deixa a imagem quadrada
+            quality: 0.8,
+        });
+
+        if (!result.canceled) {
+            setEditFoto(result.assets[0].uri); // Salva a URI da nova imagem no estado
+        }
     };
 
     const salvarEdicao = async () => {
@@ -60,13 +89,14 @@ export default function Perfil() {
                 nome: editNome,
                 email: editEmail,
                 telefone: editTelefone,
+                foto: editFoto, // ENVIA A NOVA FOTO PARA O CONTEXTO
                 ...(editSenha && { senha: editSenha, confirmaSenha: editConfirmaSenha })
             };
 
             const resultado = await EditarUsuario(dadosAtualizados);
             
             // Atualiza os dados locais
-            setDadosPessoais(prev => ({ ...prev, ...resultado }));
+            setDadosPessoais(prev => ({ ...prev, ...resultado, foto: editFoto }));
             
             Alert.alert('Sucesso', 'Dados atualizados com sucesso!');
             setModalVisible(false);
@@ -90,90 +120,78 @@ export default function Perfil() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
             >
-
-
-            <View style={stlyes.AreaImgPerfil}>
-                <Image
-                    source={dadosPessoais?.foto ? { uri: dadosPessoais.foto } : require('../../../assets/Ellipse 1.png')}
-                    style={{resizeMode: 'contain', alignSelf: 'center'}}
-                />
-            </View>
-
-            <View style={stlyes.AreaUser}>
-                <Text style={stlyes.NomeUser}>{dadosPessoais?.nome || 'Nome de usuário'}</Text>
-                <TouchableOpacity style={{marginBottom: 5}} onPress={abrirModalEdicao}> 
-                    <Ionicons name="create-outline" size={25} color="#fff" />
-                </TouchableOpacity>
-            </View>
-
-            <View style={stlyes.AreaInfo}>
-    
-                <View style={{flexDirection: 'row', alignSelf: 'center', gap: 10}}>
-                    <Ionicons name="call-outline" size={20} color="#fff" />
-                    <Text style={stlyes.Info}>{dadosPessoais?.telefone || '(00) 99999-9999'}</Text>
+                {/* Visualização do Perfil na Tela Principal */}
+                <View style={stlyes.AreaImgPerfil}>
+                    <Image
+                        source={dadosPessoais?.foto ? { uri: dadosPessoais.foto } : require('../../../assets/Ellipse 1.png')}
+                        style={{ width: 150, height: 150, borderRadius: 75, resizeMode: 'cover', alignSelf: 'center' }}
+                    />
                 </View>
 
-                <TouchableOpacity onPress={() => console.log('clicou')}>
-                    <Ionicons name="chevron-forward-outline" size={20} color="#fff" />
-                </TouchableOpacity>
-
-            </View>
-
-            <View style={{width:'90%', height: 0.5, backgroundColor: '#fff', margin: 10}}></View>
-
-            <View style={stlyes.AreaInfo}>
-    
-                <View style={{flexDirection: 'row', alignSelf: 'center', gap: 10}}>
-                    <Ionicons name="mail-outline" size={20} color="#fff" />
-                    <Text style={stlyes.Info}>{dadosPessoais?.email || 'email@gmail.com'}</Text>
+                <View style={stlyes.AreaUser}>
+                    <Text style={stlyes.NomeUser}>{dadosPessoais?.nome || 'Nome de usuário'}</Text>
+                    <TouchableOpacity style={{ marginBottom: 5 }} onPress={abrirModalEdicao}> 
+                        <Ionicons name="create-outline" size={25} color="#fff" />
+                    </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity onPress={() => console.log('clicou')}>
-                    <Ionicons name="chevron-forward-outline" size={20} color="#fff" />
-                </TouchableOpacity>
-
-            </View>
-
-            <View style={{width:'90%', height: 0.5, backgroundColor: '#fff', margin: 10}}></View>
-
-            <View style={stlyes.AreaInfo}>
-    
-                <View style={{flexDirection: 'row', alignSelf: 'center', gap: 10}}>
-                    <Ionicons name="id-card-outline" size={20} color="#fff" />
-                    <Text style={stlyes.Info}>{dadosPessoais?.cpf || '888.888.888-8'}</Text>
+                {/* Restante dos seus View e Infos... */}
+                <View style={stlyes.AreaInfo}>
+                    <View style={{ flexDirection: 'row', alignSelf: 'center', gap: 10 }}>
+                        <Ionicons name="call-outline" size={20} color="#fff" />
+                        <Text style={stlyes.Info}>{dadosPessoais?.telefone || '(00) 99999-9999'}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => console.log('clicou')}>
+                        <Ionicons name="chevron-forward-outline" size={20} color="#fff" />
+                    </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity onPress={() => console.log('clicou')}>
-                    <Ionicons name="chevron-forward-outline" size={20} color="#fff" />
-                </TouchableOpacity>
+                <View style={{ width: '90%', height: 0.5, backgroundColor: '#fff', margin: 10 }}></View>
 
-            </View>
-
-            <View style={{width:'90%', height: 0.5, backgroundColor: '#fff', margin: 10}}></View>
-
-            <View style={stlyes.AreaInfo}>
-    
-                <View style={{flexDirection: 'row', alignSelf: 'center', gap: 10}}>
-                    <Ionicons name="lock-closed-outline" size={20} color="#fff" />
-                    <Text style={stlyes.Info}>Senha</Text>
+                <View style={stlyes.AreaInfo}>
+                    <View style={{ flexDirection: 'row', alignSelf: 'center', gap: 10 }}>
+                        <Ionicons name="mail-outline" size={20} color="#fff" />
+                        <Text style={stlyes.Info}>{dadosPessoais?.email || 'email@gmail.com'}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => console.log('clicou')}>
+                        <Ionicons name="chevron-forward-outline" size={20} color="#fff" />
+                    </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity onPress={() => console.log('clicou')}>
-                    <Ionicons name="chevron-forward-outline" size={20} color="#fff" />
-                </TouchableOpacity>
+                <View style={{ width: '90%', height: 0.5, backgroundColor: '#fff', margin: 10 }}></View>
 
-            </View>
+                <View style={stlyes.AreaInfo}>
+                    <View style={{ flexDirection: 'row', alignSelf: 'center', gap: 10 }}>
+                        <Ionicons name="id-card-outline" size={20} color="#fff" />
+                        <Text style={stlyes.Info}>{dadosPessoais?.cpf || '888.888.888-8'}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => console.log('clicou')}>
+                        <Ionicons name="chevron-forward-outline" size={20} color="#fff" />
+                    </TouchableOpacity>
+                </View>
 
-            <View style={{width:'90%', height: 0.5, backgroundColor: '#fff', margin: 10}}></View>
+                <View style={{ width: '90%', height: 0.5, backgroundColor: '#fff', margin: 10 }}></View>
+
+                <View style={stlyes.AreaInfo}>
+                    <View style={{ flexDirection: 'row', alignSelf: 'center', gap: 10 }}>
+                        <Ionicons name="lock-closed-outline" size={20} color="#fff" />
+                        <Text style={stlyes.Info}>Senha</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => console.log('clicou')}>
+                        <Ionicons name="chevron-forward-outline" size={20} color="#fff" />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={{ width: '90%', height: 0.5, backgroundColor: '#fff', margin: 10 }}></View>
 
                 <LinearGradient
                     colors={['#800427', '#D70944']}
-                    start={{x:0,y:0}} 
-                    end={{x:1,y:0}}
+                    start={{ x: 0, y: 0 }} 
+                    end={{ x: 1, y: 0 }}
                     style={stlyes.BtnSair}
                 >
                     <TouchableOpacity 
-                        style={{flexDirection: 'row', justifyContent: 'space-between', padding: 7}}
+                        style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 7 }}
                         onPress={async () => {
                             try {
                                 await logout();
@@ -183,97 +201,104 @@ export default function Perfil() {
                             }
                         }}
                     >
-                        
-                            <Text style={stlyes.TitleSair}>
-                                Sair
-                            </Text>
-                            <View style={{marginTop: 5}}>
+                        <Text style={stlyes.TitleSair}>Sair</Text>
+                        <View style={{ marginTop: 5 }}>
                             <Ionicons name="chevron-forward-outline" size={20} color="#fff"/>
-                            </View>
+                        </View>
                     </TouchableOpacity>
                 </LinearGradient>
-                
 
+            </LinearGradient>
 
-        </LinearGradient>
-
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}
-        >
-            <View style={stlyes.modalOverlay}>
-                <View style={stlyes.modalContent}>
-                    <Text style={stlyes.modalTitle}>Editar Perfil</Text>
-                    
-                    <TextInput
-                        style={stlyes.input}
-                        placeholder="Nome"
-                        placeholderTextColor="#6b6969"
-                        value={editNome}
-                        onChangeText={setEditNome}
-                    />
-                    
-                    <TextInput
-                        style={stlyes.input}
-                        placeholder="Email"
-                        placeholderTextColor="#6b6969"
-                        value={editEmail}
-                        onChangeText={setEditEmail}
-                        keyboardType="email-address"
-                    />
-                    
-                    <TextInput
-                        style={stlyes.input}
-                        placeholder="Telefone"
-                        placeholderTextColor="#6b6969"
-                        value={editTelefone}
-                        onChangeText={setEditTelefone}
-                        keyboardType="phone-pad"
-                    />
-                    
-                    <TextInput
-                        style={stlyes.input}
-                        placeholder="Nova Senha (opcional)"
-                        placeholderTextColor="#6b6969"
-                        value={editSenha}
-                        onChangeText={setEditSenha}
-                        secureTextEntry
-                    />
-                    
-                    <TextInput
-                        style={stlyes.input}
-                        placeholder="Confirmar Nova Senha"
-                        placeholderTextColor="#6b6969"
-                        value={editConfirmaSenha}
-                        onChangeText={setEditConfirmaSenha}
-                        secureTextEntry
-                    />
-                    
-                    <View style={stlyes.modalButtons}>
-                        <TouchableOpacity 
-                            style={[stlyes.modalButton, stlyes.cancelButton]}
-                            onPress={() => setModalVisible(false)}
-                        >
-                            <Text style={stlyes.buttonText}>Cancelar</Text>
+            {/* MODAL DE EDIÇÃO */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={stlyes.modalOverlay}>
+                    <View style={stlyes.modalContent}>
+                        <Text style={stlyes.modalTitle}>Editar Perfil</Text>
+                        
+                        {/* ÁREA DE SELEÇÃO DE IMAGEM */}
+                        <TouchableOpacity style={stlyes.modalImageContainer} onPress={escolherImagem}>
+                            <Image
+                                source={editFoto ? { uri: editFoto } : require('../../../assets/Ellipse 1.png')}
+                                style={stlyes.modalImagePreview}
+                            />
+                            <View style={stlyes.modalImageEditIcon}>
+                                <Ionicons name="camera" size={20} color="#fff" />
+                            </View>
                         </TouchableOpacity>
                         
-                        <TouchableOpacity 
-                            style={[stlyes.modalButton, stlyes.saveButton]}
-                            onPress={salvarEdicao}
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <ActivityIndicator size="small" color="#fff" />
-                            ) : (
-                                <Text style={stlyes.buttonText}>Salvar</Text>
-                            )}
-                        </TouchableOpacity>
+                        <TextInput
+                            style={stlyes.input}
+                            placeholder="Nome"
+                            placeholderTextColor="#6b6969"
+                            value={editNome}
+                            onChangeText={setEditNome}
+                        />
+                        
+                        <TextInput
+                            style={stlyes.input}
+                            placeholder="Email"
+                            placeholderTextColor="#6b6969"
+                            value={editEmail}
+                            onChangeText={setEditEmail}
+                            keyboardType="email-address"
+                        />
+                        
+                        <TextInput
+                            style={stlyes.input}
+                            placeholder="Telefone"
+                            placeholderTextColor="#6b6969"
+                            value={editTelefone}
+                            onChangeText={setEditTelefone}
+                            keyboardType="phone-pad"
+                        />
+                        
+                        <TextInput
+                            style={stlyes.input}
+                            placeholder="Nova Senha (opcional)"
+                            placeholderTextColor="#6b6969"
+                            value={editSenha}
+                            onChangeText={setEditSenha}
+                            secureTextEntry
+                        />
+                        
+                        <TextInput
+                            style={stlyes.input}
+                            placeholder="Confirmar Nova Senha"
+                            placeholderTextColor="#6b6969"
+                            value={editConfirmaSenha}
+                            onChangeText={setEditConfirmaSenha}
+                            secureTextEntry
+                        />
+                        
+                        <View style={stlyes.modalButtons}>
+                            <TouchableOpacity 
+                                style={[stlyes.modalButton, stlyes.cancelButton]}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <Text style={stlyes.buttonText}>Cancelar</Text>
+                            </TouchableOpacity>
+                            
+                            <TouchableOpacity 
+                                style={[stlyes.modalButton, stlyes.saveButton]}
+                                onPress={salvarEdicao}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <ActivityIndicator size="small" color="#fff" />
+                                ) : (
+                                    <Text style={stlyes.buttonText}>Salvar</Text>
+                                )}
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </View>
-        </Modal>
+            </Modal>
         </View>
     )
 }
@@ -294,7 +319,6 @@ const stlyes = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-
     },
     NomeUser: {
         fontFamily: 'Poppins_700Bold',
@@ -302,12 +326,12 @@ const stlyes = StyleSheet.create({
         fontSize: 20
     },
     AreaInfo: {
-    width: '90%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 30
-},
+        width: '90%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 30
+    },
     Info: {
         fontFamily: 'Poppins_400Regular',
         color: '#fff',
@@ -337,14 +361,39 @@ const stlyes = StyleSheet.create({
         borderRadius: 10,
         padding: 20,
         width: '90%',
-        maxHeight: '80%'
+        maxHeight: '90%'
     },
     modalTitle: {
         fontSize: 20,
         fontFamily: 'Poppins_700Bold',
         color: '#fff',
         textAlign: 'center',
-        marginBottom: 20
+        marginBottom: 15
+    },
+    // NOVOS ESTILOS PARA A IMAGEM DO MODAL
+    modalImageContainer: {
+        alignSelf: 'center',
+        marginBottom: 20,
+        position: 'relative',
+    },
+    modalImagePreview: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        resizeMode: 'cover',
+    },
+    modalImageEditIcon: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: '#D70944',
+        borderRadius: 15,
+        width: 30,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#333'
     },
     input: {
         backgroundColor: '#fff',
@@ -357,7 +406,7 @@ const stlyes = StyleSheet.create({
     modalButtons: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 20
+        marginTop: 10
     },
     modalButton: {
         flex: 1,
